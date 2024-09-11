@@ -49,16 +49,13 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           backgroundColor={colors.background}
           borderColor={colors.border}
         >
-          <Dialog.Title color={colors.textBlack}>{title}</Dialog.Title>
-          <Dialog.Description color={colors.textGray}>
+          <Dialog.Title color={colors.primary}>{title}</Dialog.Title>
+          <Dialog.Description color={colors.secondary}>
             {description}
           </Dialog.Description>
           <XStack gap="$3" justifyContent="flex-end" marginTop="$4">
             <Dialog.Close asChild>
-              <Button
-                backgroundColor={colors.unselectedBackground}
-                color={colors.textBlack}
-              >
+              <Button backgroundColor={colors.gray} color={colors.secondary}>
                 {cancelText}
               </Button>
             </Dialog.Close>

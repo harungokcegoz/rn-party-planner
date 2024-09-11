@@ -1,10 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { Party } from "../model/models";
 import { usePartyStore } from "../model/store/useStore";
 
 export const usePartyViewModel = () => {
-  const addParty = usePartyStore((state) => state.addParty);
+  const { parties, addParty } = usePartyStore();
 
   const handleAddParty = useCallback(
     (party: Party) => {
@@ -19,7 +19,10 @@ export const usePartyViewModel = () => {
     [addParty],
   );
 
+  const getParties = useMemo(() => parties, [parties]);
+
   return {
     handleAddParty,
+    getParties,
   };
 };

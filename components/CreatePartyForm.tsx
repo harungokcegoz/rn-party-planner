@@ -133,7 +133,7 @@ const CreatePartyForm = ({ onCreateParty, onCancel }: CreatePartyFormProps) => {
           />
         )}
         <Form.Trigger asChild>
-          <Button backgroundColor={colors.primary} color={colors.textWhite}>
+          <Button backgroundColor={colors.secondary} color={colors.textWhite}>
             <Ionicons name="add-outline" size={25} color={colors.textWhite} />
             Create Party
           </Button>

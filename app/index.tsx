@@ -16,23 +16,23 @@ const Homepage = () => {
       flex={1}
       paddingVertical="$10"
       paddingHorizontal="$4"
-      backgroundColor={colors.gray}
+      backgroundColor={colors.background}
     >
       <Button
         onPress={() => setIsCreating(!isCreating)}
         backgroundColor={isCreating ? colors.red : colors.cta}
-        color={colors.textWhite}
+        color={colors.secondary}
         animation="quick"
         pressStyle={{ scale: 0.97 }}
-        borderTopLeftRadius={isCreating ? "$4" : "$0"}
-        borderTopRightRadius={isCreating ? "$4" : "$0"}
+        borderTopLeftRadius="$4"
+        borderTopRightRadius="$4"
         borderBottomLeftRadius={isCreating ? "$0" : "$4"}
         borderBottomRightRadius={isCreating ? "$0" : "$4"}
       >
         <Ionicons
           name={isCreating ? "close-outline" : "add-outline"}
           size={25}
-          color="#fff"
+          color={colors.secondary}
         />
         {isCreating ? "Cancel" : "Create New Party"}
       </Button>

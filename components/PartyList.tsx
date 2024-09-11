@@ -1,14 +1,15 @@
-import { format } from "date-fns";
 import React from "react";
 import { FlatList } from "react-native";
-import { Text, View, Button } from "tamagui";
+import { Text, View } from "tamagui";
 
-import { usePartyStore } from "../model/store/useStore";
+import { usePartyViewModel } from "../view-models/PartyViewModel";
 
-export const PartyList = () => {
-  const parties = usePartyStore((state) => state.parties);
+import PartyCard from "./PartyCard";
 
-  if (parties.length === 0) {
+export const PartyList: React.FC = () => {
+  const { getParties } = usePartyViewModel();
+
+  if (getParties.length === 0) {
     return (
       <View flex={1} justifyContent="center" alignItems="center">
         <Text>No parties yet. Add a new party to get started!</Text>
@@ -18,31 +19,11 @@ export const PartyList = () => {
 
   return (
     <FlatList
-      data={parties}
+      data={getParties}
+      renderItem={({ item }) => <PartyCard party={item} />}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <View
-          padding="$2"
-          marginBottom="$2"
-          borderRadius="$2"
-          borderWidth={1}
-          borderColor="$gray5"
-        >
-          <Text fontSize="$6" fontWeight="bold">
-            {item.name}
-          </Text>
-          <Text>{item.description}</Text>
-          <Text>{format(item.date, "PPP")}</Text>
-          <Text>Invitees: {item.invitees.length}</Text>
-          <Button
-            onPress={() => {
-              /* TODO: Implement send invitation */
-            }}
-          >
-            Send Invitations
-          </Button>
-        </View>
-      )}
+      contentContainerStyle={{ padding: 16 }}
+      showsVerticalScrollIndicator={false}
     />
   );
 };
