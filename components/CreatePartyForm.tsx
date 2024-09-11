@@ -33,7 +33,7 @@ const CreatePartyForm = ({ onCreateParty, onCancel }: CreatePartyFormProps) => {
       invitees: [],
     };
     onCreateParty(newParty, place);
-    onCancel(); // Close the form after submitting
+    onCancel();
   }, [onCreateParty, onCancel, name, description, date, time, place]);
 
   return (
