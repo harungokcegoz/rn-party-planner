@@ -2,6 +2,7 @@ export interface Contact {
   id: string;
   name: string;
   phoneNumber: string;
+  email: string;
 }
 
 export interface Party {
@@ -9,7 +10,7 @@ export interface Party {
   name: string;
   description: string;
   date: Date;
-  invitees: string[];
+  invitees: Contact[]; // Changed from string[] to Contact[]
   calendarEventId?: string;
   place: string;
 }

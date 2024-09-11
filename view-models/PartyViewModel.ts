@@ -1,103 +1,62 @@
 import * as Calendar from "expo-calendar";
-import { useCallback, useMemo, useState, useEffect } from "react";
-import { Alert } from "react-native";
+import * as Contacts from "expo-contacts";
+import * as MailComposer from "expo-mail-composer";
+import { useCallback, useMemo, useState } from "react";
+import { Alert, Linking } from "react-native";
 
-import { Party } from "../model/models";
+import { Contact, Party } from "../model/models";
 import { usePartyStore } from "../model/store/useStore";
 
 export const usePartyViewModel = () => {
-  const { parties, addParty, deleteParty } = usePartyStore();
+  const { parties, addParty, deleteParty, updateParties } = usePartyStore();
   const [partyToDelete, setPartyToDelete] = useState<string | null>(null);
   const [partyToCreate, setPartyToCreate] = useState<Party | null>(null);
-  const [partiesCalendarId, setPartiesCalendarId] = useState<string | null>(
-    null,
-  );
+  const [selectedContacts, setSelectedContacts] = useState<Contact[]>([]);
 
-  const createPartiesCalendar = useCallback(async () => {
+  const addToCalendar = useCallback(async (party: Party) => {
     try {
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
-      if (status === "granted") {
-        const calendars = await Calendar.getCalendarsAsync(
-          Calendar.EntityTypes.EVENT,
-        );
-        const partiesCalendar = calendars.find(
-          (cal) => cal.title === "Parties",
-        );
-
-        if (!partiesCalendar) {
-          const newCalendarId = await Calendar.createCalendarAsync({
-            title: "Parties",
-            color: "#4285F4",
-            entityType: Calendar.EntityTypes.EVENT,
-            sourceId: calendars.find((cal) => cal.isPrimary)?.source.id,
-            name: "Parties",
-            accessLevel: Calendar.CalendarAccessLevel.OWNER,
-            ownerAccount: "personal",
-          });
-          console.log("Created new Parties calendar with ID:", newCalendarId);
-          setPartiesCalendarId(newCalendarId);
-        } else {
-          console.log(
-            "Parties calendar already exists with ID:",
-            partiesCalendar.id,
-          );
-          setPartiesCalendarId(partiesCalendar.id);
-        }
-      } else {
-        throw new Error("Calendar permission not granted");
-      }
-    } catch (error) {
-      console.error("Error creating Parties calendar:", error);
-      Alert.alert(
-        "Error",
-        "Failed to create Parties calendar. Please try again.",
+      const calendars = await Calendar.getCalendarsAsync(
+        Calendar.EntityTypes.EVENT,
       );
-    }
-  }, []);
+      const partiesCalendar = calendars.find((cal) => cal.title === "Parties");
 
-  useEffect(() => {
-    createPartiesCalendar();
-  }, [createPartiesCalendar]);
-
-  const addToCalendar = useCallback(
-    async (party: Party) => {
-      if (!partiesCalendarId) {
-        Alert.alert("Error", "Parties calendar not found. Please try again.");
-        return null;
-      }
-
-      try {
-        const eventDetails = {
-          title: party.name,
-          notes: party.description,
-          startDate: party.date,
-          endDate: new Date(party.date.getTime() + 2 * 60 * 60 * 1000),
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          location: party.place,
-        };
-
-        const eventId = await Calendar.createEventAsync(
-          partiesCalendarId,
-          eventDetails,
-        );
-
-        if (eventId) {
-          Alert.alert("Success", "Party added to your Parties calendar");
-          return eventId;
-        } else {
-          throw new Error("Failed to add event: No event ID returned");
-        }
-      } catch (error) {
-        console.error("Error adding event to calendar:", error);
+      if (!partiesCalendar) {
         Alert.alert(
           "Error",
-          `Failed to add party to your calendar: ${(error as Error).message}. Please try again.`,
+          "Parties calendar not found. Please restart the app and try again.",
         );
         return null;
       }
-    },
-    [partiesCalendarId],
-  );
+
+      const eventDetails = {
+        title: party.name,
+        notes: party.description,
+        startDate: party.date,
+        endDate: new Date(party.date.getTime() + 2 * 60 * 60 * 1000),
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        location: party.place,
+      };
+
+      const eventId = await Calendar.createEventAsync(
+        partiesCalendar.id,
+        eventDetails,
+      );
+
+      if (eventId) {
+        Alert.alert("Success", "Party added to your Parties calendar");
+        return eventId;
+      } else {
+        throw new Error("Failed to add event: No event ID returned");
+      }
+    } catch (error) {
+      console.error("Error adding event to calendar:", error);
+      Alert.alert(
+        "Error",
+        `Failed to add party to your calendar: ${(error as Error).message}. Please try again.`,
+      );
+      return null;
+    }
+  }, []);
 
   const removeFromCalendar = useCallback(async (party: Party) => {
     if (!party.calendarEventId) {
@@ -165,6 +124,93 @@ export const usePartyViewModel = () => {
 
   const getParties = useMemo(() => parties, [parties]);
 
+  const addContactToParty = useCallback(
+    async (partyId: string) => {
+      try {
+        const { status } = await Contacts.requestPermissionsAsync();
+        if (status === "granted") {
+          const { data } = await Contacts.getContactsAsync({
+            fields: [Contacts.Fields.PhoneNumbers, Contacts.Fields.Name, Contacts.Fields.Emails],
+          });
+
+          if (data.length > 0) {
+            const contact = await Contacts.presentContactPickerAsync();
+
+            if (contact) {
+              const newContact: Contact = {
+                id: contact.id || "",
+                name: `${contact.firstName || ""} ${contact.lastName || ""}`.trim() || "Unknown",
+                phoneNumber: contact.phoneNumbers ? contact.phoneNumbers[0].number || "" : "",
+                email: contact.emails ? contact.emails[0].email || "" : "",
+              };
+
+              const updatedParties = parties.map((party) => {
+                if (party.id === partyId) {
+                  return {
+                    ...party,
+                    invitees: [...party.invitees, newContact],
+                  };
+                }
+                return party;
+              });
+
+              updateParties(updatedParties);
+              Alert.alert("Success", `${newContact.name} added to the party!`);
+            }
+          } else {
+            Alert.alert("No Contacts", "No contacts found on your device.");
+          }
+        } else {
+          Alert.alert(
+            "Permission Denied",
+            "Unable to access contacts. Please grant permission in your device settings.",
+          );
+        }
+      } catch (error) {
+        console.error("Error accessing contacts:", error);
+        Alert.alert("Error", "Failed to access contacts. Please try again.");
+      }
+    },
+    [parties, updateParties],
+  );
+
+  const sendInvitations = useCallback(
+    async (party: Party) => {
+      try {
+        const invitees = selectedContacts.filter((contact) =>
+          party.invitees.includes(contact.id),
+        );
+        const to = invitees.map((contact) => contact.phoneNumber);
+
+        const isAvailable = await MailComposer.isAvailableAsync();
+
+        if (isAvailable) {
+          const { status } = await MailComposer.composeAsync({
+            subject: `Invitation to ${party.name}`,
+            body: `You're invited to ${party.name}!\n\nDate: ${party.date}\nLocation: ${party.place}\n\nDescription: ${party.description}`,
+            recipients: to,
+          });
+
+          if (status === "sent") {
+            Alert.alert("Success", "Invitations sent successfully!");
+          }
+        } else {
+          // Fallback to mailto: URL
+          const mailtoUrl = `mailto:${to.join(",")}?subject=${encodeURIComponent(
+            `Invitation to ${party.name}`,
+          )}&body=${encodeURIComponent(
+            `You're invited to ${party.name}!\n\nDate: ${party.date}\nLocation: ${party.place}\n\nDescription: ${party.description}`,
+          )}`;
+          Linking.openURL(mailtoUrl);
+        }
+      } catch (error) {
+        console.error("Error sending invitations:", error);
+        Alert.alert("Error", "Failed to send invitations. Please try again.");
+      }
+    },
+    [selectedContacts],
+  );
+
   return {
     handleAddParty,
     getParties,
@@ -175,5 +221,8 @@ export const usePartyViewModel = () => {
     confirmAddParty,
     cancelAddParty,
     partyToCreate,
+    addContactToParty,
+    selectedContacts,
+    sendInvitations,
   };
 };

@@ -1,11 +1,14 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { format } from "date-fns";
 import { memo } from "react";
+import React from "react";
 import { Image } from "react-native";
+import { Alert } from "react-native";
 import { Card, Text, XStack, YStack, Button, View } from "tamagui";
 
 import { Party } from "../model/models";
 import { colors } from "../styles/colors";
+import { usePartyViewModel } from "../view-models/PartyViewModel";
 
 interface PartyCardProps {
   party: Party;
@@ -13,6 +16,17 @@ interface PartyCardProps {
 }
 
 const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
+  const { sendInvitations, addContactToParty } = usePartyViewModel();
+
+  const handleAddContact = async () => {
+    try {
+      await addContactToParty(party.id);
+    } catch (error) {
+      console.error("Error adding contact:", error);
+      Alert.alert("Error", "Failed to add contact. Please try again.");
+    }
+  };
+
   return (
     <Card
       size="$4"
@@ -99,18 +113,30 @@ const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
               </View>
               <View
                 display="flex"
-                flexDirection="row"
-                alignItems="center"
+                flexDirection="column"
+                alignItems="flex-start"
                 space="$2"
               >
-                <Ionicons
-                  name="people-outline"
-                  size={13}
-                  color={colors.primary}
-                />
-                <Text fontSize="$2" color={colors.secondary}>
-                  {party.invitees.length}
-                </Text>
+                <XStack alignItems="center" space="$2">
+                  <Ionicons
+                    name="people-outline"
+                    size={13}
+                    color={colors.primary}
+                  />
+                  <Text fontSize="$2" color={colors.secondary}>
+                    {party.invitees.length} invitees
+                  </Text>
+                  {party.invitees.map((invitee) => (
+                    <Text
+                      key={invitee.id}
+                      fontSize="$2"
+                      color={colors.cta}
+                      fontStyle="italic"
+                    >
+                      {invitee.name} -
+                    </Text>
+                  ))}
+                </XStack>
               </View>
             </YStack>
           </XStack>
@@ -128,22 +154,9 @@ const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
           size="$2"
           backgroundColor="transparent"
           marginTop="$2"
-          onPress={() => {
-            /* TODO: Implement send invitation */
-          }}
+          onPress={() => sendInvitations(party)}
         >
           <Ionicons name="share-outline" size={20} color={colors.cta} />
-        </Button>
-        {/* TODO: Show invitees */}
-        <Button
-          size="$2"
-          backgroundColor="transparent"
-          marginTop="$2"
-          onPress={() => {
-            /* TODO: Implement show invitees */
-          }}
-        >
-          <Ionicons name="people-outline" size={20} color={colors.cta} />
         </Button>
         <Button
           size="$2"
@@ -152,6 +165,14 @@ const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
           onPress={() => onDeleteParty(party.id)}
         >
           <Ionicons name="trash-outline" size={20} color={colors.cta} />
+        </Button>
+        <Button
+          size="$2"
+          backgroundColor="transparent"
+          marginTop="$2"
+          onPress={handleAddContact}
+        >
+          <Ionicons name="person-add-outline" size={20} color={colors.cta} />
         </Button>
       </YStack>
     </Card>

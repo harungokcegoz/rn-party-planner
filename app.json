@@ -36,8 +36,14 @@
         "expo-asset",
         {
           "assets": [
-            "./assets/partyicon.jpg"
+            "./assets/partyicon.png"
           ]
+        }
+      ],
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow Party Planner to access your contacts."
         }
       ]
     ]
