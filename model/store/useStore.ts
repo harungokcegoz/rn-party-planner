@@ -6,6 +6,7 @@ interface PartyStore {
   parties: Party[];
   addParty: (party: Party) => void;
   addInvitee: (partyId: string, invitee: Contact) => void;
+  deleteParty: (partyId: string) => void;
 }
 
 export const usePartyStore = create<PartyStore>((set) => ({
@@ -18,5 +19,9 @@ export const usePartyStore = create<PartyStore>((set) => ({
           ? { ...party, invitees: [...party.invitees, invitee] }
           : party,
       ),
+    })),
+  deleteParty: (partyId) =>
+    set((state) => ({
+      parties: state.parties.filter((party) => party.id !== partyId),
     })),
 }));

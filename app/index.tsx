@@ -2,14 +2,25 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { View, Button, YStack } from "tamagui";
 
+import ConfirmationDialog from "../components/ConfirmationDialog";
 import CreatePartyForm from "../components/CreatePartyForm";
 import { PartyList } from "../components/PartyList";
 import { colors } from "../styles/colors";
 import { usePartyViewModel } from "../view-models/PartyViewModel";
 
-const Homepage = () => {
+const Homepage: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false);
-  const { handleAddParty } = usePartyViewModel();
+  const {
+    handleAddParty,
+    getParties,
+    handleDeleteParty,
+    confirmDeleteParty,
+    cancelDeleteParty,
+    partyToDelete,
+    confirmAddParty,
+    cancelAddParty,
+    partyToCreate,
+  } = usePartyViewModel();
 
   return (
     <View
@@ -50,7 +61,25 @@ const Homepage = () => {
           />
         </YStack>
       )}
-      <PartyList />
+      <PartyList parties={getParties} onDeleteParty={handleDeleteParty} />
+      <ConfirmationDialog
+        isOpen={!!partyToDelete}
+        onClose={cancelDeleteParty}
+        onConfirm={confirmDeleteParty}
+        title="Delete Party"
+        description="Are you sure you want to delete this party? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
+      <ConfirmationDialog
+        isOpen={!!partyToCreate}
+        onClose={cancelAddParty}
+        onConfirm={confirmAddParty}
+        title="Create Party"
+        description="Are you sure you want to create this party and add it to your calendar?"
+        confirmText="Create"
+        cancelText="Cancel"
+      />
     </View>
   );
 };

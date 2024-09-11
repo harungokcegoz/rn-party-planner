@@ -24,7 +24,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 }) => {
   return (
     <Dialog modal open={isOpen} onOpenChange={onClose}>
-      <Dialog.Portal>
+      <Dialog.Portal padding="$5">
         <Dialog.Overlay
           key="overlay"
           animation="quick"
@@ -49,13 +49,15 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           backgroundColor={colors.background}
           borderColor={colors.border}
         >
-          <Dialog.Title color={colors.primary}>{title}</Dialog.Title>
-          <Dialog.Description color={colors.secondary}>
+          <Dialog.Title color={colors.primary} fontSize="$8" fontWeight="bold">
+            {title}
+          </Dialog.Title>
+          <Dialog.Description color={colors.secondary} marginTop="$2">
             {description}
           </Dialog.Description>
           <XStack gap="$3" justifyContent="flex-end" marginTop="$4">
             <Dialog.Close asChild>
-              <Button backgroundColor={colors.gray} color={colors.secondary}>
+              <Button backgroundColor={colors.gray} color={colors.red}>
                 {cancelText}
               </Button>
             </Dialog.Close>
@@ -63,7 +65,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
               theme="active"
               onPress={onConfirm}
               backgroundColor={colors.cta}
-              color={colors.textWhite}
+              color={colors.secondary}
             >
               {confirmText}
             </Button>

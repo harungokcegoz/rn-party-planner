@@ -44,7 +44,7 @@ export function SelectItem<T extends string | number>({
               padding="$4"
               fontSize="$2"
               fontWeight="$3"
-              color={colors.textGray}
+              color={colors.textWhite}
               backgroundColor={colors.background}
             >
               Scroll for more choices

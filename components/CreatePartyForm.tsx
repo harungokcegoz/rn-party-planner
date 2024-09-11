@@ -8,16 +8,19 @@ import { Party } from "../model/models";
 import { colors } from "../styles/colors";
 
 interface CreatePartyFormProps {
-  onCreateParty: (party: Party) => void;
+  onCreateParty: (party: Party, place: string) => void;
   onCancel: () => void;
 }
 
 const CreatePartyForm = ({ onCreateParty, onCancel }: CreatePartyFormProps) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(new Date());
-  const [place, setPlace] = useState("");
+  const [name, setName] = useState("House Party");
+  const [description, setDescription] = useState(
+    "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa, quos.",
+  );
+  const defaultDate = new Date(2024, 8, 18, 20, 0); // September 18, 2024, 8:00 PM
+  const [date, setDate] = useState(defaultDate);
+  const [time, setTime] = useState(defaultDate);
+  const [place, setPlace] = useState("123 Main St, San Francisco, CA 94105");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -26,12 +29,12 @@ const CreatePartyForm = ({ onCreateParty, onCancel }: CreatePartyFormProps) => {
       id: Date.now().toString(),
       name,
       description,
-      date,
+      date: new Date(date.setHours(time.getHours(), time.getMinutes())),
       invitees: [],
     };
-    onCreateParty(newParty);
-    onCancel();
-  }, [onCreateParty, onCancel, name, description, date]);
+    onCreateParty(newParty, place);
+    onCancel(); // Close the form after submitting
+  }, [onCreateParty, onCancel, name, description, date, time, place]);
 
   return (
     <Form onSubmit={handleSubmit}>

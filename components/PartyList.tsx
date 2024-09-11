@@ -2,14 +2,16 @@ import React from "react";
 import { FlatList } from "react-native";
 import { Text, View } from "tamagui";
 
-import { usePartyViewModel } from "../view-models/PartyViewModel";
-
+import { Party } from "../model/models";
 import PartyCard from "./PartyCard";
 
-export const PartyList: React.FC = () => {
-  const { getParties } = usePartyViewModel();
+interface PartyListProps {
+  parties: Party[];
+  onDeleteParty: (partyId: string) => void;
+}
 
-  if (getParties.length === 0) {
+export const PartyList: React.FC<PartyListProps> = ({ parties, onDeleteParty }) => {
+  if (parties.length === 0) {
     return (
       <View flex={1} justifyContent="center" alignItems="center">
         <Text>No parties yet. Add a new party to get started!</Text>
@@ -19,8 +21,8 @@ export const PartyList: React.FC = () => {
 
   return (
     <FlatList
-      data={getParties}
-      renderItem={({ item }) => <PartyCard party={item} />}
+      data={parties}
+      renderItem={({ item }) => <PartyCard party={item} onDeleteParty={onDeleteParty} />}
       keyExtractor={(item) => item.id}
       contentContainerStyle={{ padding: 16 }}
       showsVerticalScrollIndicator={false}
