@@ -1,14 +1,15 @@
 import React from "react";
 import { SafeAreaView } from "react-native";
-import { TamaguiProvider, Text } from "tamagui";
+import { TamaguiProvider } from "tamagui";
 
-import config from "./tamagui.config";
+import AppNavigation from "../components/Navigation";
+import config from "../tamagui.config";
 
 export default function Layout() {
   return (
     <TamaguiProvider config={config}>
       <SafeAreaView style={{ flex: 1 }}>
-        <Text>Hello World</Text>
+        <AppNavigation />
       </SafeAreaView>
     </TamaguiProvider>
   );
