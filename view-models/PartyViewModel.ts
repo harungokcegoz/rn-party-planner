@@ -66,7 +66,7 @@ export const usePartyViewModel = () => {
     async (party: Party, place: string) => {
       if (!partiesCalendarId) {
         Alert.alert("Error", "Parties calendar not found. Please try again.");
-        return;
+        return null;
       }
 
       try {
@@ -79,15 +79,14 @@ export const usePartyViewModel = () => {
           location: place,
         };
 
-        console.log("Attempting to add event:", eventDetails);
         const eventId = await Calendar.createEventAsync(
           partiesCalendarId,
           eventDetails,
         );
-        console.log("Event added successfully. Event ID:", eventId);
 
         if (eventId) {
           Alert.alert("Success", "Party added to your Parties calendar");
+          return eventId;
         } else {
           throw new Error("Failed to add event: No event ID returned");
         }
@@ -95,22 +94,48 @@ export const usePartyViewModel = () => {
         console.error("Error adding event to calendar:", error);
         Alert.alert(
           "Error",
-          `Failed to add party to your calendar: ${error.message}. Please try again.`,
+          `Failed to add party to your calendar: ${(error as Error).message}. Please try again.`,
         );
+        return null;
       }
     },
     [partiesCalendarId],
   );
 
-  const confirmAddParty = useCallback(() => {
+  const removeFromCalendar = useCallback(async (party: Party) => {
+    if (!party.calendarEventId) {
+      console.error("No calendar event ID found for party");
+      return;
+    }
+
+    try {
+      await Calendar.deleteEventAsync(party.calendarEventId);
+    } catch (error) {
+      console.error("Error removing event from calendar:", error);
+      Alert.alert(
+        "Error",
+        `Failed to remove party from your calendar: ${(error as Error).message}. Please try again.`,
+      );
+    }
+  }, []);
+
+  const confirmAddParty = useCallback(async () => {
     if (partyToCreate) {
       const newParty = {
         ...partyToCreate.party,
         id: Date.now().toString(),
       };
-      addParty(newParty);
-      addToCalendar(newParty, partyToCreate.place);
-      setPartyToCreate(null);
+      const eventId = await addToCalendar(newParty, partyToCreate.place);
+      if (eventId) {
+        newParty.calendarEventId = eventId;
+        addParty(newParty);
+        setPartyToCreate(null);
+      } else {
+        Alert.alert(
+          "Error",
+          "Failed to add party to your calendar. Please try again.",
+        );
+      }
     }
   }, [addParty, partyToCreate, addToCalendar]);
 
@@ -126,12 +151,16 @@ export const usePartyViewModel = () => {
     setPartyToDelete(partyId);
   }, []);
 
-  const confirmDeleteParty = useCallback(() => {
+  const confirmDeleteParty = useCallback(async () => {
     if (partyToDelete) {
+      const partyToRemove = parties.find((party) => party.id === partyToDelete);
+      if (partyToRemove) {
+        await removeFromCalendar(partyToRemove);
+      }
       deleteParty(partyToDelete);
       setPartyToDelete(null);
     }
-  }, [deleteParty, partyToDelete]);
+  }, [deleteParty, partyToDelete, parties, removeFromCalendar]);
 
   const cancelDeleteParty = useCallback(() => {
     setPartyToDelete(null);
