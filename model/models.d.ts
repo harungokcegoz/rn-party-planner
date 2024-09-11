@@ -10,5 +10,6 @@ export interface Party {
   description: string;
   date: Date;
   invitees: string[];
-  calendarEventId?: string; 
+  calendarEventId?: string;
+  place: string;
 }

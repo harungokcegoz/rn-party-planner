@@ -31,6 +31,14 @@
         {
           "calendarPermission": "The app needs to access your calendar."
         }
+      ],
+      [
+        "expo-asset",
+        {
+          "assets": [
+            "./assets/partyicon.jpg"
+          ]
+        }
       ]
     ]
   }

@@ -8,10 +8,7 @@ import { usePartyStore } from "../model/store/useStore";
 export const usePartyViewModel = () => {
   const { parties, addParty, deleteParty } = usePartyStore();
   const [partyToDelete, setPartyToDelete] = useState<string | null>(null);
-  const [partyToCreate, setPartyToCreate] = useState<{
-    party: Party;
-    place: string;
-  } | null>(null);
+  const [partyToCreate, setPartyToCreate] = useState<Party | null>(null);
   const [partiesCalendarId, setPartiesCalendarId] = useState<string | null>(
     null,
   );
@@ -63,7 +60,7 @@ export const usePartyViewModel = () => {
   }, [createPartiesCalendar]);
 
   const addToCalendar = useCallback(
-    async (party: Party, place: string) => {
+    async (party: Party) => {
       if (!partiesCalendarId) {
         Alert.alert("Error", "Parties calendar not found. Please try again.");
         return null;
@@ -76,7 +73,7 @@ export const usePartyViewModel = () => {
           startDate: party.date,
           endDate: new Date(party.date.getTime() + 2 * 60 * 60 * 1000),
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          location: place,
+          location: party.place,
         };
 
         const eventId = await Calendar.createEventAsync(
@@ -122,10 +119,10 @@ export const usePartyViewModel = () => {
   const confirmAddParty = useCallback(async () => {
     if (partyToCreate) {
       const newParty = {
-        ...partyToCreate.party,
+        ...partyToCreate,
         id: Date.now().toString(),
       };
-      const eventId = await addToCalendar(newParty, partyToCreate.place);
+      const eventId = await addToCalendar(newParty);
       if (eventId) {
         newParty.calendarEventId = eventId;
         addParty(newParty);
@@ -139,8 +136,8 @@ export const usePartyViewModel = () => {
     }
   }, [addParty, partyToCreate, addToCalendar]);
 
-  const handleAddParty = useCallback((party: Party, place: string) => {
-    setPartyToCreate({ party, place });
+  const handleAddParty = useCallback((party: Party) => {
+    setPartyToCreate(party);
   }, []);
 
   const cancelAddParty = useCallback(() => {

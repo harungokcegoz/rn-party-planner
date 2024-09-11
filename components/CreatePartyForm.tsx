@@ -8,7 +8,7 @@ import { Party } from "../model/models";
 import { colors } from "../styles/colors";
 
 interface CreatePartyFormProps {
-  onCreateParty: (party: Party, place: string) => void;
+  onCreateParty: (party: Party) => void;
   onCancel: () => void;
 }
 
@@ -31,8 +31,9 @@ const CreatePartyForm = ({ onCreateParty, onCancel }: CreatePartyFormProps) => {
       description,
       date: new Date(date.setHours(time.getHours(), time.getMinutes())),
       invitees: [],
+      place,
     };
-    onCreateParty(newParty, place);
+    onCreateParty(newParty);
     onCancel();
   }, [onCreateParty, onCancel, name, description, date, time, place]);
 
