@@ -27,12 +27,7 @@ const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
       justifyContent="space-between"
     >
       <YStack width="85%">
-        <Card.Header
-          borderBottomWidth={1}
-          borderBottomColor={colors.gray}
-          paddingHorizontal="$4"
-          paddingVertical="$3"
-        >
+        <Card.Header paddingHorizontal="$4" paddingVertical="$3">
           <XStack alignItems="center" space="$2">
             <Text fontSize="$6" fontWeight="bold" color={colors.secondary}>
               {party.name}
@@ -98,7 +93,7 @@ const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
                   size={13}
                   color={colors.primary}
                 />
-                <Text fontSize="$2" color={colors.secondary}>
+                <Text fontSize="$2" color={colors.secondary} fontWeight="bold">
                   {party.place}
                 </Text>
               </View>
@@ -123,7 +118,7 @@ const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
       </YStack>
       <YStack
         backgroundColor={colors.secondary}
-        paddingVertical="$3"
+        paddingVertical="$5"
         justifyContent="space-between"
         width="14%"
         borderTopRightRadius="$4"

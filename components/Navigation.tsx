@@ -27,7 +27,7 @@ export default function AppNavigation() {
         headerShown: false,
         tabBarIconStyle: { marginBottom: -5 },
         tabBarLabelStyle: { fontSize: 12, marginTop: -5 },
-        tabBarActiveTintColor: colors.cta,
+        tabBarActiveTintColor: colors.secondary,
       }}
     >
       <Tabs.Screen
