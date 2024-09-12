@@ -32,7 +32,7 @@ export const usePartyViewModel = () => {
         title: party.name,
         notes: party.description,
         startDate: party.date,
-        endDate: new Date(party.date),
+        endDate: new Date(new Date(party.date).getTime() + 2 * 60 * 60 * 1000),
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         location: party.place,
       };
@@ -210,15 +210,15 @@ export const usePartyViewModel = () => {
 
       const message = `You're invited to ${party.name}!
 
-          Date: ${party.date.toLocaleString()}
-          Location: ${party.place}
+Date: ${party.date.toLocaleString()}
+Location: ${party.place}
 
-          Description: ${party.description}
+Description: ${party.description}
 
-          We hope to see you there!`;
+We hope to see you there!`;
 
       const isAvailable = await SMS.isAvailableAsync();
-
+      console.log("hrn", isAvailable);
       if (isAvailable) {
         const { result } = await SMS.sendSMSAsync(phoneNumbers, message);
 

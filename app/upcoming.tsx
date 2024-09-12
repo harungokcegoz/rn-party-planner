@@ -30,59 +30,60 @@ const Upcoming: React.FC = () => {
       flex={1}
       padding="$4"
       space="$4"
-      marginTop="$6"
+      paddingTop="$6"
       backgroundColor={colors.background}
     >
-      <ScrollView>
-        <Text
-          fontSize="$8"
-          fontWeight="bold"
-          color={colors.primary}
-          marginBottom="$4"
-        >
-          {format(today, "MMMM d, yyyy")}
-        </Text>
-
-        <YStack space="$2">
-          <Text
-            fontSize="$5"
-            fontWeight="bold"
-            color={colors.secondary}
-            borderBottomWidth={1}
-            borderBottomColor={colors.primary}
-            paddingBottom={8}
-          >
-            This Week's Parties
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <YStack space="$4">
+          <Text fontSize="$8" fontWeight="bold" color={colors.primary}>
+            {format(today, "MMMM d, yyyy")}
           </Text>
-          {weekParties.length > 0 ? (
-            <PartyList
-              parties={weekParties}
-              onDeleteParty={handleDeleteParty}
-            />
-          ) : (
-            <Text>No parties this week</Text>
-          )}
-        </YStack>
 
-        <YStack space="$2">
-          <Text
-            fontSize="$5"
-            fontWeight="bold"
-            color={colors.secondary}
-            borderBottomWidth={1}
-            borderBottomColor={colors.primary}
-            paddingBottom={8}
-          >
-            Upcoming Parties This Month
-          </Text>
-          {monthParties.length > 0 ? (
-            <PartyList
-              parties={monthParties}
-              onDeleteParty={handleDeleteParty}
-            />
-          ) : (
-            <Text>No parties this month</Text>
-          )}
+          <YStack space="$2">
+            <Text
+              fontSize="$5"
+              fontWeight="bold"
+              color={colors.secondary}
+              borderBottomWidth={3}
+              borderColor={colors.primary}
+              paddingBottom={8}
+            >
+              This Week's Parties
+            </Text>
+            {weekParties.length > 0 ? (
+              <PartyList
+                parties={weekParties}
+                onDeleteParty={handleDeleteParty}
+              />
+            ) : (
+              <Text fontStyle="italic" color={colors.secondary}>
+                No parties this week
+              </Text>
+            )}
+          </YStack>
+
+          <YStack space="$2">
+            <Text
+              fontSize="$5"
+              fontWeight="bold"
+              color={colors.secondary}
+              borderBottomWidth={1}
+              borderBottomColor={colors.primary}
+              paddingBottom={8}
+            >
+              Upcoming Parties This Month
+            </Text>
+            {monthParties.length > 0 ? (
+              <PartyList
+                parties={monthParties}
+                onDeleteParty={handleDeleteParty}
+              />
+            ) : (
+              <Text fontStyle="italic" color={colors.secondary}>
+                No parties this month
+              </Text>
+            )}
+          </YStack>
         </YStack>
       </ScrollView>
     </YStack>

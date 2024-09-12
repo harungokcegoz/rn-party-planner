@@ -26,8 +26,9 @@ const Homepage: React.FC = () => {
   return (
     <View
       flex={1}
-      paddingVertical="$10"
+      paddingVertical="$4"
       paddingHorizontal="$4"
+      paddingBottom="$10"
       backgroundColor={colors.background}
     >
       <Button

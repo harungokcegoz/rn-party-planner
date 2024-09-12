@@ -1,6 +1,6 @@
 import * as Calendar from "expo-calendar";
 import React, { useEffect } from "react";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 
 const CalendarInitializer: React.FC = () => {
   useEffect(() => {
@@ -16,21 +16,29 @@ const CalendarInitializer: React.FC = () => {
           );
 
           if (!partiesCalendar) {
-            const newCalendarId = await Calendar.createCalendarAsync({
-              title: "Parties",
-              color: "#4285F4",
-              entityType: Calendar.EntityTypes.EVENT,
-              sourceId: calendars.find((cal) => cal.isPrimary)?.source.id,
-              name: "Parties",
-              accessLevel: Calendar.CalendarAccessLevel.OWNER,
-              ownerAccount: "personal",
-            });
-            console.log("Created new Parties calendar with ID:", newCalendarId);
-          } else {
-            console.log(
-              "Parties calendar already exists with ID:",
-              partiesCalendar.id,
+            const writableCalendars = calendars.filter(
+              (cal) => cal.source && !cal.source.isReadOnly,
             );
+
+            if (writableCalendars.length > 0) {
+              const [primaryCalendar] = writableCalendars;
+
+              await Calendar.createCalendarAsync({
+                title: "Parties",
+                color: "#4285F4",
+                entityType: Calendar.EntityTypes.EVENT,
+                sourceId: primaryCalendar.source.id,
+                name: "Parties",
+                accessLevel: Calendar.CalendarAccessLevel.OWNER,
+                ownerAccount: Platform.OS === "ios" ? "personal" : "work",
+              });
+            } else {
+              console.error("No writable calendar sources available."); // {{ edit_2 }}
+              Alert.alert(
+                "Error",
+                "No calendar accounts available that allow modifications. Please check your account settings.",
+              );
+            }
           }
         } else {
           throw new Error("Calendar permission not granted");

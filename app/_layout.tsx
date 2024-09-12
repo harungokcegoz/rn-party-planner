@@ -1,5 +1,5 @@
 import React from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { TamaguiProvider } from "tamagui";
 
 import CalendarInitializer from "../components/CalendarInitializer";
@@ -10,11 +10,13 @@ import config from "../tamagui.config";
 export default function Layout() {
   return (
     <TamaguiProvider config={config}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <AppNavigation />
-        <CalendarInitializer />
-        <ContactsInitializer />
-      </SafeAreaView>
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1 }}>
+          <AppNavigation />
+          <CalendarInitializer />
+          <ContactsInitializer />
+        </SafeAreaView>
+      </SafeAreaProvider>
     </TamaguiProvider>
   );
 }
