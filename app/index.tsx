@@ -5,14 +5,15 @@ import { View, Button, YStack } from "tamagui";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import CreatePartyForm from "../components/CreatePartyForm";
 import { PartyList } from "../components/PartyList";
+import { usePartyStore } from "../model/store/useStore";
 import { colors } from "../styles/colors";
 import { usePartyViewModel } from "../view-models/PartyViewModel";
 
 const Homepage: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false);
+  const { parties } = usePartyStore();
   const {
     handleAddParty,
-    getParties,
     handleDeleteParty,
     confirmDeleteParty,
     cancelDeleteParty,
@@ -53,7 +54,6 @@ const Homepage: React.FC = () => {
           animation="quick"
           enterStyle={{ opacity: 0, scale: 0.9 }}
           exitStyle={{ opacity: 0, scale: 0.9 }}
-          marginBottom="$4"
         >
           <CreatePartyForm
             onCreateParty={handleAddParty}
@@ -61,8 +61,8 @@ const Homepage: React.FC = () => {
           />
         </YStack>
       )}
-      <View marginTop="$4">
-        <PartyList parties={getParties} onDeleteParty={handleDeleteParty} />
+      <View>
+        <PartyList parties={parties} onDeleteParty={handleDeleteParty} />
       </View>
       <ConfirmationDialog
         isOpen={!!partyToDelete}

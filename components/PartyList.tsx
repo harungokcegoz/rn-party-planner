@@ -30,7 +30,7 @@ export const PartyList: React.FC<PartyListProps> = ({
         <PartyCard party={item} onDeleteParty={onDeleteParty} />
       )}
       keyExtractor={(item) => item.id}
-      contentContainerStyle={{ padding: 8 }}
+      contentContainerStyle={{ padding: 8, paddingTop: 20, paddingBottom: 70 }}
       showsVerticalScrollIndicator={false}
     />
   );

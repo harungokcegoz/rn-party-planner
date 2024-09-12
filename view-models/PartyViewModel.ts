@@ -1,7 +1,7 @@
 import * as Calendar from "expo-calendar";
 import * as Contacts from "expo-contacts";
 import * as SMS from "expo-sms";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { Alert } from "react-native";
 
 import { Contact, Party } from "../model/models";
@@ -32,7 +32,7 @@ export const usePartyViewModel = () => {
         title: party.name,
         notes: party.description,
         startDate: party.date,
-        endDate: new Date(party.date.getTime() + 2 * 60 * 60 * 1000),
+        endDate: new Date(party.date),
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         location: party.place,
       };
@@ -121,8 +121,6 @@ export const usePartyViewModel = () => {
   const cancelDeleteParty = useCallback(() => {
     setPartyToDelete(null);
   }, []);
-
-  const getParties = useMemo(() => parties, [parties]);
 
   const addContactToParty = useCallback(
     async (partyId: string) => {
@@ -240,7 +238,6 @@ export const usePartyViewModel = () => {
 
   return {
     handleAddParty,
-    getParties,
     handleDeleteParty,
     confirmDeleteParty,
     cancelDeleteParty,
