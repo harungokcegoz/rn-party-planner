@@ -13,14 +13,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.rnpartyplanner"
+      "bundleIdentifier": "com.rnpartyplanner",
+      "infoPlist": {
+        "NSContactsUsageDescription": "This app requires access to your contacts to invite them to parties."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.rnpartyplanner"
+      "package": "com.rnpartyplanner",
+      "permissions": ["SEND_SMS"]
     },
     "web": {
       "favicon": "./assets/favicon.png"

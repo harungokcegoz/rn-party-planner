@@ -1,8 +1,8 @@
 import * as Calendar from "expo-calendar";
 import * as Contacts from "expo-contacts";
-import * as MailComposer from "expo-mail-composer";
+import * as SMS from "expo-sms";
 import { useCallback, useMemo, useState } from "react";
-import { Alert, Linking } from "react-native";
+import { Alert } from "react-native";
 
 import { Contact, Party } from "../model/models";
 import { usePartyStore } from "../model/store/useStore";
@@ -130,7 +130,11 @@ export const usePartyViewModel = () => {
         const { status } = await Contacts.requestPermissionsAsync();
         if (status === "granted") {
           const { data } = await Contacts.getContactsAsync({
-            fields: [Contacts.Fields.PhoneNumbers, Contacts.Fields.Name, Contacts.Fields.Emails],
+            fields: [
+              Contacts.Fields.PhoneNumbers,
+              Contacts.Fields.Name,
+              Contacts.Fields.Emails,
+            ],
           });
 
           if (data.length > 0) {
@@ -139,8 +143,12 @@ export const usePartyViewModel = () => {
             if (contact) {
               const newContact: Contact = {
                 id: contact.id || "",
-                name: `${contact.firstName || ""} ${contact.lastName || ""}`.trim() || "Unknown",
-                phoneNumber: contact.phoneNumbers ? contact.phoneNumbers[0].number || "" : "",
+                name:
+                  `${contact.firstName || ""} ${contact.lastName || ""}`.trim() ||
+                  "Unknown",
+                phoneNumber: contact.phoneNumbers
+                  ? contact.phoneNumbers[0].number || ""
+                  : "",
                 email: contact.emails ? contact.emails[0].email || "" : "",
               };
 
@@ -174,42 +182,44 @@ export const usePartyViewModel = () => {
     [parties, updateParties],
   );
 
-  const sendInvitations = useCallback(
-    async (party: Party) => {
-      try {
-        const invitees = selectedContacts.filter((contact) =>
-          party.invitees.includes(contact.id),
-        );
-        const to = invitees.map((contact) => contact.phoneNumber);
+  const sendInvitations = useCallback(async (party: Party) => {
+    try {
+      const phoneNumbers = party.invitees
+        .map((invitee) => invitee.phoneNumber)
+        .filter(Boolean);
 
-        const isAvailable = await MailComposer.isAvailableAsync();
-
-        if (isAvailable) {
-          const { status } = await MailComposer.composeAsync({
-            subject: `Invitation to ${party.name}`,
-            body: `You're invited to ${party.name}!\n\nDate: ${party.date}\nLocation: ${party.place}\n\nDescription: ${party.description}`,
-            recipients: to,
-          });
-
-          if (status === "sent") {
-            Alert.alert("Success", "Invitations sent successfully!");
-          }
-        } else {
-          // Fallback to mailto: URL
-          const mailtoUrl = `mailto:${to.join(",")}?subject=${encodeURIComponent(
-            `Invitation to ${party.name}`,
-          )}&body=${encodeURIComponent(
-            `You're invited to ${party.name}!\n\nDate: ${party.date}\nLocation: ${party.place}\n\nDescription: ${party.description}`,
-          )}`;
-          Linking.openURL(mailtoUrl);
-        }
-      } catch (error) {
-        console.error("Error sending invitations:", error);
-        Alert.alert("Error", "Failed to send invitations. Please try again.");
+      if (phoneNumbers.length === 0) {
+        Alert.alert("Error", "No valid phone numbers found for invitees.");
+        return;
       }
-    },
-    [selectedContacts],
-  );
+
+      const message = `You're invited to ${party.name}!
+
+          Date: ${party.date.toLocaleString()}
+          Location: ${party.place}
+
+          Description: ${party.description}
+
+          We hope to see you there!`;
+
+      const isAvailable = await SMS.isAvailableAsync();
+
+      if (isAvailable) {
+        const { result } = await SMS.sendSMSAsync(phoneNumbers, message);
+
+        if (result === "sent") {
+          Alert.alert("Success", "Invitations sent successfully!");
+        } else {
+          Alert.alert("Info", "SMS composer closed without sending.");
+        }
+      } else {
+        Alert.alert("Error", "SMS is not available on this device.");
+      }
+    } catch (error) {
+      console.error("Error sending invitations:", error);
+      Alert.alert("Error", "Failed to send invitations. Please try again.");
+    }
+  }, []);
 
   return {
     handleAddParty,

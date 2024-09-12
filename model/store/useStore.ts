@@ -1,12 +1,12 @@
 import { create } from "zustand";
 
-import { Party } from "../models";
+import { Party, Contact } from "../models";
 
 interface PartyStore {
   parties: Party[];
   addParty: (party: Party) => void;
   updateParties: (updatedParties: Party[]) => void;
-  addInvitee: (partyId: string, invitee: string) => void;
+  addInvitee: (partyId: string, invitee: Contact) => void;
   deleteParty: (partyId: string) => void;
 }
 

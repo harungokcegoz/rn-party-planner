@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { format } from "date-fns";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import React from "react";
 import { Image } from "react-native";
 import { Alert } from "react-native";
@@ -18,14 +18,23 @@ interface PartyCardProps {
 const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
   const { sendInvitations, addContactToParty } = usePartyViewModel();
 
-  const handleAddContact = async () => {
+  const handleAddContact = useCallback(async () => {
     try {
       await addContactToParty(party.id);
     } catch (error) {
       console.error("Error adding contact:", error);
       Alert.alert("Error", "Failed to add contact. Please try again.");
     }
-  };
+  }, [party, addContactToParty]);
+
+  const handleSendInvitations = useCallback(async () => {
+    try {
+      await sendInvitations(party);
+    } catch (error) {
+      console.error("Error sending invitations:", error);
+      Alert.alert("Error", "Failed to send invitations. Please try again.");
+    }
+  }, [party, sendInvitations]);
 
   return (
     <Card
@@ -154,7 +163,7 @@ const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
           size="$2"
           backgroundColor="transparent"
           marginTop="$2"
-          onPress={() => sendInvitations(party)}
+          onPress={handleSendInvitations}
         >
           <Ionicons name="share-outline" size={20} color={colors.cta} />
         </Button>

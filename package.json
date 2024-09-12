@@ -32,7 +32,8 @@
     "react-native-screens": "^3.34.0",
     "react-native-svg": "^15.6.0",
     "tamagui": "^1.110.3",
-    "zustand": "^4.5.5"
+    "zustand": "^4.5.5",
+    "expo-sms": "~12.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
