@@ -154,6 +154,24 @@ export const usePartyViewModel = () => {
 
               const updatedParties = parties.map((party) => {
                 if (party.id === partyId) {
+                  // Check if the contact is already in the party
+                  const isContactAlreadyInvited = party.invitees.some(
+                    (invitee) => invitee.id === newContact.id,
+                  );
+
+                  if (isContactAlreadyInvited) {
+                    Alert.alert(
+                      "Info",
+                      `${newContact.name} is already invited to this party.`,
+                    );
+                    return party;
+                  } else {
+                    Alert.alert(
+                      "Success",
+                      `${newContact.name} added to the party!`,
+                    );
+                  }
+
                   return {
                     ...party,
                     invitees: [...party.invitees, newContact],
@@ -163,7 +181,6 @@ export const usePartyViewModel = () => {
               });
 
               updateParties(updatedParties);
-              Alert.alert("Success", `${newContact.name} added to the party!`);
             }
           } else {
             Alert.alert("No Contacts", "No contacts found on your device.");
