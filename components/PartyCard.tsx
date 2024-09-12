@@ -49,7 +49,7 @@ const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
       flexDirection="row"
       justifyContent="space-between"
     >
-      <YStack width="85%">
+      <YStack width="85%" flex={1}>
         <Card.Header paddingHorizontal="$4" paddingVertical="$3">
           <XStack alignItems="center" space="$2">
             <Text fontSize="$6" fontWeight="bold" color={colors.secondary}>
@@ -126,23 +126,24 @@ const PartyCard: React.FC<PartyCardProps> = ({ party, onDeleteParty }) => {
                 alignItems="flex-start"
                 space="$2"
               >
-                <XStack alignItems="center" space="$2">
+                <XStack alignItems="center" space="$2" flexWrap="wrap">
                   <Ionicons
                     name="people-outline"
                     size={13}
                     color={colors.primary}
                   />
                   <Text fontSize="$2" color={colors.secondary}>
-                    {party.invitees.length} invitees
+                    {party.invitees.length} invitees:
                   </Text>
-                  {party.invitees.map((invitee) => (
+                  {party.invitees.map((invitee, index) => (
                     <Text
                       key={invitee.id}
                       fontSize="$2"
                       color={colors.cta}
                       fontStyle="italic"
                     >
-                      {invitee.name} -
+                      {invitee.name}
+                      {index < party.invitees.length - 1 ? ", " : ""}
                     </Text>
                   ))}
                 </XStack>

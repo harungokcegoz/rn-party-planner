@@ -61,7 +61,9 @@ const Homepage: React.FC = () => {
           />
         </YStack>
       )}
-      <PartyList parties={getParties} onDeleteParty={handleDeleteParty} />
+      <View marginTop="$4">
+        <PartyList parties={getParties} onDeleteParty={handleDeleteParty} />
+      </View>
       <ConfirmationDialog
         isOpen={!!partyToDelete}
         onClose={cancelDeleteParty}
