@@ -20,14 +20,6 @@ export const usePartyViewModel = () => {
       );
       const partiesCalendar = calendars.find((cal) => cal.title === "Parties");
 
-      if (!partiesCalendar) {
-        Alert.alert(
-          "Error",
-          "Parties calendar not found. Please restart the app and try again.",
-        );
-        return null;
-      }
-
       const eventDetails = {
         title: party.name,
         notes: party.description,

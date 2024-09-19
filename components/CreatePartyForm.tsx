@@ -17,7 +17,7 @@ const CreatePartyForm = ({ onCreateParty, onCancel }: CreatePartyFormProps) => {
   const [description, setDescription] = useState(
     "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa, quos.",
   );
-  const defaultDate = new Date(2024, 8, 18, 20, 0); // September 18, 2024, 8:00 PM
+  const defaultDate = new Date(2024, 8, 30, 20, 0); // September 30, 2024, 8:00 PM
   const [date, setDate] = useState(defaultDate);
   const [time, setTime] = useState(defaultDate);
   const [place, setPlace] = useState("123 Main St, San Francisco, CA 94105");

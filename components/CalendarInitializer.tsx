@@ -33,7 +33,7 @@ const CalendarInitializer: React.FC = () => {
                 ownerAccount: Platform.OS === "ios" ? "personal" : "work",
               });
             } else {
-              console.error("No writable calendar sources available."); // {{ edit_2 }}
+              console.error("No writable calendar sources available.");
               Alert.alert(
                 "Error",
                 "No calendar accounts available that allow modifications. Please check your account settings.",
