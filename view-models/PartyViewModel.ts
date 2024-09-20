@@ -210,7 +210,7 @@ Description: ${party.description}
 We hope to see you there!`;
 
       const isAvailable = await SMS.isAvailableAsync();
-      console.log("hrn", isAvailable);
+      
       if (isAvailable) {
         const { result } = await SMS.sendSMSAsync(phoneNumbers, message);
 
